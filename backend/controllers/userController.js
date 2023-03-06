@@ -11,7 +11,6 @@ const crypto = require("crypto");
 // @access Public
 
 const registerUser = asyncHandler(async (req, res) => {
-  console.log("yooo")
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
     res.status(400);
@@ -28,8 +27,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
   // Create user
-
-  let user = await User.create({
+  const user = await User.create({
     name,
     email,
     password: hashedPassword,
