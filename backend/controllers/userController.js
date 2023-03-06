@@ -2,11 +2,16 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
+const Token = require("../models/tokenModel");
+const sendEmail = require("../utils/sendEmail");
+const crypto = require("crypto");
 
 // @desc Register new user
 // @route POST /api/users
 // @access Public
+
 const registerUser = asyncHandler(async (req, res) => {
+  console.log("yooo")
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
     res.status(400);
@@ -24,17 +29,24 @@ const registerUser = asyncHandler(async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, salt);
   // Create user
 
-  const user = await User.create({
+  let user = await User.create({
     name,
     email,
     password: hashedPassword,
   });
+  const token = await new Token({
+    userId: user._id,
+    token: crypto.randomBytes(32).toString("hex"),
+  }).save();
+  const url = `${process.env.BASE_URL}users/${user.id}/verify/${token.token}`;
+  await sendEmail(user.email, "Verify Email", url);
   if (user) {
     res.status(201).json({
       token: generateToken(user._id),
       _id: user.id,
       name: user.name,
       email: user.email,
+      message: "An email has been sent to your email. Please verify email.",
     });
   } else {
     res.status(400);

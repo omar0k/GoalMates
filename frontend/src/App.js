@@ -19,7 +19,7 @@ function App() {
           </Routes>
         </div>
       </Router>
-      <ToastContainer />
+      <ToastContainer autoClose={2000} limit={2}/>
     </>
   );
 }
