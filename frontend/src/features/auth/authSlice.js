@@ -29,7 +29,21 @@ export const register = createAsyncThunk(
     }
   }
 );
+//verify user email
 
+export const verify = createAsyncThunk(
+  "auth/verify",
+  async (userData, thunkAPI) => {
+    try {
+      return await authService.verify(userData);
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.mesage) ||
+        error.message | error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  }
+);
 // Login user
 export const login = createAsyncThunk("auth/login", async (user, thunkAPI) => {
   try {

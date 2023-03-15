@@ -59,12 +59,29 @@ const loginUser = asyncHandler(async (req, res) => {
   // check for user email
   const user = await User.findOne({ email });
 
-  if (user && (await bcrypt.compare(password, user.password))) {
+  if (
+    user &&
+    (await bcrypt.compare(password, user.password)) &&
+    user.verified
+  ) {
     res.json({
       token: generateToken(user._id),
       _id: user.id,
       name: user.name,
       email: user.email,
+    });
+  } else if (!user.verified) {
+    let token = await Token.findOne({ userId: user._id });
+    if (!token) {
+      token = await new Token({
+        userId: user._id,
+        token: crypto.randomBytes(32).toString("hex"),
+      }).save();
+      const url = `${process.env.BASE_URL}users/${user.id}/verify/${token.token}`;
+      await sendEmail(user.email, "Verify Email", url);
+    }
+    return res.status({
+      message: `An email has been sent to your ${user.email} email. Please verify email.`,
     });
   } else {
     res.status(400);
@@ -90,5 +107,27 @@ const generateToken = (id) => {
     expiresIn: "30d",
   });
 };
-
-module.exports = { registerUser, loginUser, getMe };
+const verifyUser = asyncHandler(async (req, res) => {
+  console.log("verify");
+  try {
+    const user = await User.findOne({ _id: req.params.id });
+    if (!user) {
+      return res.status(400).send({ message: "Invalid link" });
+    }
+    const token = await Token.findOne({
+      userId: user._id,
+      token: req.params.token,
+    });
+    if (!token) {
+      return res.status(400).send({ message: "invalid link" });
+    }
+    await User.updateOne({ id: user._id, verified: true });
+    await token.remove();
+    res.status(200).send({ message: "Email verfied successfully." });
+    console.log("email verified");
+  } catch (error) {
+    console.log(error);
+    throw new Error(error);
+  }
+});
+module.exports = { registerUser, loginUser, getMe, verifyUser };
