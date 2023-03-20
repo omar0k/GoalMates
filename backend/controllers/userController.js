@@ -36,7 +36,7 @@ const registerUser = asyncHandler(async (req, res) => {
     userId: user._id,
     token: crypto.randomBytes(32).toString("hex"),
   }).save();
-  const url = `${process.env.BASE_URL}users/${user.id}/verify/${token.token}`;
+  const url = `${process.env.BASE_URL}users/${user._id}/verify/${token.token}`;
   await sendEmail(user.email, "Verify Email", url);
   if (user) {
     res.status(201).json({
@@ -71,13 +71,15 @@ const loginUser = asyncHandler(async (req, res) => {
       email: user.email,
     });
   } else if (!user.verified) {
+    console.log("not verified")
     let token = await Token.findOne({ userId: user._id });
+    console.log(token)
     if (!token) {
       token = await new Token({
         userId: user._id,
         token: crypto.randomBytes(32).toString("hex"),
       }).save();
-      const url = `${process.env.BASE_URL}users/${user.id}/verify/${token.token}`;
+      const url = `${process.env.BASE_URL}users/${user._id}/verify/${token.token}`;
       await sendEmail(user.email, "Verify Email", url);
     }
     return res.status({
@@ -108,21 +110,24 @@ const generateToken = (id) => {
   });
 };
 const verifyUser = asyncHandler(async (req, res) => {
-  console.log("verify");
   try {
+    console.log(req.params.id)
     const user = await User.findOne({ _id: req.params.id });
     if (!user) {
+      console.log("not user");
       return res.status(400).send({ message: "Invalid link" });
     }
     const token = await Token.findOne({
       userId: user._id,
       token: req.params.token,
     });
+    console.log("this is token", token);
     if (!token) {
+      console.log("not token");
       return res.status(400).send({ message: "invalid link" });
     }
     await User.updateOne({ id: user._id, verified: true });
-    await token.remove();
+    // await token.remove();
     res.status(200).send({ message: "Email verfied successfully." });
     console.log("email verified");
   } catch (error) {

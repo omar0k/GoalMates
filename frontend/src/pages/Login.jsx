@@ -18,12 +18,16 @@ function Login() {
   const { user, isLoading, isError, isSuccess, message } = useSelector(
     (state) => state.auth
   );
+  console.log(user)
   useEffect(() => {
     if (isError) {
       toast.error(message);
     }
     if (isSuccess || user) {
       navigate("/");
+    }
+    if (user && !user.verified) {
+      toast.error(message);
     }
     dispatch(reset());
   }, [user, isError, isSuccess, message, navigate, dispatch]);

@@ -9,7 +9,7 @@ const EmailVerify = () => {
     const verifyEmailUrl = async () => {
       try {
         const url = `http://localhost:5000/api/users/${params.id}/verify/${params.token}`;
-        console.log("yo");
+        console.log("email verified");
         const { data } = await axios.get(url);
         console.log(data);
         setValidUrl(true);
@@ -18,8 +18,10 @@ const EmailVerify = () => {
         setValidUrl(false);
       }
     };
-    verifyEmailUrl();
-  }, [params]);
+    if (params.id && params.token) {
+      verifyEmailUrl();
+    }
+  }, []);
   return (
     <>
       {validUrl ? (
