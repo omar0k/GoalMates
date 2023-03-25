@@ -25,10 +25,17 @@ const EmailVerify = () => {
   return (
     <>
       {validUrl ? (
-        <div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
           <h1>Email verified successfully.</h1>
           <Link to="/login">
-            <button>Login</button>
+            <button className="btn">Login</button>
           </Link>
         </div>
       ) : (

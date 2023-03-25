@@ -56,40 +56,45 @@ const registerUser = asyncHandler(async (req, res) => {
 // @access Public
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  // check for user email
+
+  // check if user exists
   const user = await User.findOne({ email });
 
-  if (
-    user &&
-    (await bcrypt.compare(password, user.password)) &&
-    user.verified
-  ) {
+  if (!user) {
+    return res.status(400).json({ message: "Invalid credentials" });
+  }
+
+  // check if user is verified and password is correct
+  if (user.verified && (await bcrypt.compare(password, user.password))) {
     res.json({
       token: generateToken(user._id),
       _id: user.id,
       name: user.name,
       email: user.email,
+      verified: user.verified,
     });
   } else if (!user.verified) {
-    console.log("not verified")
+    console.log("not verified");
     let token = await Token.findOne({ userId: user._id });
-    console.log(token)
+
     if (!token) {
       token = await new Token({
         userId: user._id,
         token: crypto.randomBytes(32).toString("hex"),
       }).save();
+
       const url = `${process.env.BASE_URL}users/${user._id}/verify/${token.token}`;
       await sendEmail(user.email, "Verify Email", url);
     }
-    return res.status({
-      message: `An email has been sent to your ${user.email} email. Please verify email.`,
+
+    return res.status(400).json({
+      message: `An email has been sent to your email. Please verify your email to login.`,
     });
   } else {
-    res.status(400);
-    throw new Error("Invalid credentials");
+    return res.status(400).json({ message: "Invalid credentials" });
   }
 });
+
 // @desc get user data
 // @route POST /api/users/me
 // @access private
@@ -111,7 +116,7 @@ const generateToken = (id) => {
 };
 const verifyUser = asyncHandler(async (req, res) => {
   try {
-    console.log(req.params.id)
+    console.log(req.params.id);
     const user = await User.findOne({ _id: req.params.id });
     if (!user) {
       console.log("not user");
