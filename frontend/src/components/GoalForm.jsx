@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { createGoal } from "../features/goals/goalSlice";
+import Datetime from "react-datetime";
+import "react-datetime/css/react-datetime.css";
 function GoalForm() {
   const [text, setText] = useState("");
   const dispatch = useDispatch();
@@ -22,6 +24,8 @@ function GoalForm() {
             value={text}
             onChange={(e) => setText(e.target.value)}
           />
+          <label htmlFor="date">Due Date</label>
+          <Datetime />
         </div>
         <div className="form-group">
           <button className="btn btn-block" type="submit">
