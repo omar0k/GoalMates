@@ -1,23 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import GoalForm from "../components/GoalForm";
 import Spinner from "../components/Spinner";
-import GoalItem from "../components/GoalItem";
 import { getGoals, reset } from "../features/goals/goalSlice";
+import Goals from "../components/Goals";
+import Pact from "../components/Pact";
 function Dashboard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const [displayType, setDisplayType] = useState("goals");
   const { user } = useSelector((state) => state.auth);
-  const { goals, isLoading, isError, message } = useSelector(
-    (state) => state.goals
-  );
-  useEffect(() => {
-    if (isError) {
-      console.log(message);
-    }
-  }, [isError, message]);
+  const { isLoading } = useSelector((state) => state.goals);
   useEffect(() => {
     if (!user) {
       navigate("/login");
@@ -35,21 +28,24 @@ function Dashboard() {
     <>
       <section className="heading">
         <h1>Welcome {user && user.name}</h1>
-        <p>Goals Dashboard</p>
+        <p>Dashboard</p>
       </section>
-      <GoalForm />
-
-      <section className="content">
-        {goals.length > 0 ? (
-          <div className="goals">
-            {goals.map((goal) => {
-              return <GoalItem key={goal._id} goal={goal} />;
-            })}
-          </div>
-        ) : (
-          <h3> You have not set any goals.</h3>
-        )}
+      <section
+        style={{ display: "flex", gap: "20px", justifyContent: "center",marginBottom:"10px" }}
+      >
+        <button
+          className="btn"
+          onClick={() => {
+            setDisplayType("goals");
+          }}
+        >
+          Goals
+        </button>
+        <button className="btn" onClick={() => setDisplayType("pact")}>
+          Pact
+        </button>
       </section>
+      <div>{displayType === "goals" ? <Goals /> : <Pact />}</div>
     </>
   );
 }
