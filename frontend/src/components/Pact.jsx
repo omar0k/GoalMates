@@ -5,6 +5,7 @@ const Pact = () => {
     pactName: "",
   });
   const { pactEmail, pactName } = pactMember;
+  const handleSubmitMember=()=>{}
   return (
     <div>
       <section className="form">
@@ -32,6 +33,9 @@ const Pact = () => {
             value={pactEmail}
             className="form-control"
           />
+          <button className="btn btn-block" type="submit"onClick={handleSubmitMember}>
+            Add Member
+          </button>
         </div>
       </section>
     </div>
