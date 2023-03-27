@@ -116,23 +116,21 @@ const generateToken = (id) => {
 };
 const verifyUser = asyncHandler(async (req, res) => {
   try {
-    console.log(req.params.id);
     const user = await User.findOne({ _id: req.params.id });
     if (!user) {
       console.log("not user");
-      return res.status(400).send({ message: "Invalid link" });
+      res.status(400).send({ message: "Invalid link" });
     }
     const token = await Token.findOne({
       userId: user._id,
       token: req.params.token,
     });
-    console.log("this is token", token);
     if (!token) {
-      console.log("not token");
       return res.status(400).send({ message: "invalid link" });
     }
-    await User.updateOne({ id: user._id, verified: true });
-    // await token.remove();
+    console.log(user._id);
+    await User.updateOne({ _id: user._id }, { verified: true });
+    await token.remove();
     res.status(200).send({ message: "Email verfied successfully." });
     console.log("email verified");
   } catch (error) {

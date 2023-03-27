@@ -6,7 +6,6 @@ function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-
   const onLogout = () => {
     dispatch(logout());
     dispatch(reset());
@@ -20,10 +19,12 @@ function Header() {
       <ul>
         {user ? (
           <li>
-            <button className="btn" onClick={onLogout}>
-              <FaSignOutAlt />
-              Logout
-            </button>
+            {user.token && (
+              <button className="btn" onClick={onLogout}>
+                <FaSignOutAlt />
+                Logout
+              </button>
+            )}
           </li>
         ) : (
           <>
@@ -41,5 +42,4 @@ function Header() {
     </header>
   );
 }
-
 export default Header;

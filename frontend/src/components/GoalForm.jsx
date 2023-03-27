@@ -7,7 +7,7 @@ import "react-datetime/css/react-datetime.css";
 function GoalForm() {
   const [text, setText] = useState("");
   const dispatch = useDispatch();
-  const [dueDate, setDueDate] = useState(null);
+  const [dueDate, setDueDate] = useState("");
   const onSubmit = (e) => {
     e.preventDefault();
     if (dueDate > Date.now()) {
@@ -16,7 +16,7 @@ function GoalForm() {
     dispatch(createGoal({ text, dueDate }));
     setText("");
   };
-  
+
   const handleDueDateChange = (e) => {
     setDueDate(e.target.value);
   };

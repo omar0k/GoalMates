@@ -22,11 +22,11 @@ function Login() {
     if (isError) {
       toast.error(message);
     }
-    if (isSuccess || user) {
-      navigate("/");
-    }
     if (user && !user.verified) {
       toast.error(message);
+    }
+    if (isSuccess || user) {
+      navigate("/");
     }
     dispatch(reset());
   }, [user, isError, isSuccess, message, navigate, dispatch]);
