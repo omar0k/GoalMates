@@ -11,7 +11,7 @@ function GoalForm() {
   const onSubmit = (e) => {
     e.preventDefault();
     if (dueDate > Date.now()) {
-      toast.error("Due date must be away than today.");
+      toast.error("Due date must be further than today.");
     }
     dispatch(createGoal({ text, dueDate }));
     setText("");

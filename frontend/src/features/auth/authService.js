@@ -17,15 +17,16 @@ const login = async (userData) => {
   const response = await axios.post(API_URL + "login", userData);
 
   if (response.data) {
-    console.log("response",response.data)
+    console.log("response", response.data);
     localStorage.setItem("user", JSON.stringify(response.data));
   }
 
   return response.data;
 };
 const verify = async (userData) => {
-  const { userId, userToken } = userData;
-  const response = await axios.get(API_URL + userId + "/verify/" + userToken);
+  const url = `${API_URL}${userData.id}/verify/${userData.token}`;
+  console.log(url);
+  const response = await axios.get(url);
   if (response.data) {
     console.log(response.data);
   }

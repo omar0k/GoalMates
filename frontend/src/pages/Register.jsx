@@ -35,7 +35,8 @@ function Register() {
     if (password !== password2) {
       toast.error("Passwords do not match");
       return;
-    } else {
+    }
+    else {
       const userData = {
         name,
         email,
@@ -50,6 +51,7 @@ function Register() {
   useEffect(() => {
     if (isError) {
       toast.error(message);
+      setRegistered(false);
     }
     dispatch(reset());
   }, [isError, message, dispatch]);

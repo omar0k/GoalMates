@@ -14,6 +14,7 @@ function Dashboard() {
   useEffect(() => {
     if (!user) {
       navigate("/login");
+      return;
     }
     dispatch(getGoals());
     return () => {
@@ -31,7 +32,12 @@ function Dashboard() {
         <p>Dashboard</p>
       </section>
       <section
-        style={{ display: "flex", gap: "20px", justifyContent: "center",marginBottom:"10px" }}
+        style={{
+          display: "flex",
+          gap: "20px",
+          justifyContent: "center",
+          marginBottom: "10px",
+        }}
       >
         <button
           className="btn"

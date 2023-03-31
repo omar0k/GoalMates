@@ -1,30 +1,39 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { verify } from ".././features/auth/authSlice";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { valid } from "joi";
 const EmailVerify = () => {
   const [validUrl, setValidUrl] = useState(false);
   const params = useParams();
+  console.log();
+  const { isLoading, isError, isSuccess, message } = useSelector(
+    (state) => state.auth
+  );
+
+  const dispatch = useDispatch();
   useEffect(() => {
     const verifyEmailUrl = async () => {
+      const userData = { id: params.id, token: params.token };
+      console.log(userData);
       try {
-        const url = `http://localhost:5000/api/users/${params.id}/verify/${params.token}`;
-        console.log("email verified");
-        const { data } = await axios.get(url);
-        console.log(data);
+        await dispatch(verify(userData));
         setValidUrl(true);
       } catch (error) {
-        console.log(error);
         setValidUrl(false);
       }
     };
     if (params.id && params.token) {
       verifyEmailUrl();
     }
-  }, []);
+  }, [dispatch, params.id, params.token]);
+  console.log(isSuccess);
   return (
     <>
-      {validUrl ? (
+      {isLoading && <div>Loading...</div>}
+      {isSuccess && validUrl && (
         <div
           style={{
             display: "flex",
@@ -38,9 +47,8 @@ const EmailVerify = () => {
             <button className="btn">Login</button>
           </Link>
         </div>
-      ) : (
-        <h1>404 Not Found</h1>
       )}
+      {isError && <h2>{"404 Not Found"}</h2>}
     </>
   );
 };
