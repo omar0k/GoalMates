@@ -5,6 +5,7 @@ import Spinner from "../components/Spinner";
 import { getGoals, reset } from "../features/goals/goalSlice";
 import Goals from "../components/Goals";
 import Pact from "../components/Pact";
+import { getPact } from "../features/pact/pactSlice";
 function Dashboard() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ function Dashboard() {
       return;
     }
     dispatch(getGoals());
+    dispatch(getPact());
     return () => {
       dispatch(reset());
     };

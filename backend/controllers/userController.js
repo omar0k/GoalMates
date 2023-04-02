@@ -162,17 +162,21 @@ const addToPact = asyncHandler(async (req, res) => {
     }
     const userAddedTo = await User.findById(req.user.id);
     const userToAdd = await User.findOne({ email: req.body.email });
+    // console.log(userAddedTo.id, userToAdd.id);
     if (!userToAdd) {
       return res.status(400).json({
         message: "User not found",
       });
+    }
+    if (userAddedTo.id === userToAdd.id) {
+      return res.status(400).json({ message: "Invalid email." });
     }
     if (userAddedTo.pact.includes(userToAdd._id)) {
       return res.status(400).json({ message: "User is already in pact" });
     }
     userAddedTo.pact.push(userToAdd._id);
     await userAddedTo.save();
-    res.json({ message: "User added to pact", pact: userAddedTo.pact });
+    res.status(200).json({ Name: userToAdd.name, Email: userToAdd.email });
   } catch (error) {
     console.log(error);
     throw new Error(error);

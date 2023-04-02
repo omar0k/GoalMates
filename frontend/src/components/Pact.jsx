@@ -1,11 +1,39 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addToPact } from "../features/pact/pactSlice";
+import { toast } from "react-toastify";
 const Pact = () => {
   const [pactMember, setPactMember] = useState({
-    pactEmail: "",
-    pactName: "",
+    email: "",
+    name: "",
   });
-  const { pactEmail, pactName } = pactMember;
-  const handleSubmitMember=()=>{}
+  const dispatch = useDispatch();
+  const { email, name } = pactMember;
+  const { pact, isError, isSuccess, message, isLoading } = useSelector(
+    (state) => state.pact
+  );
+  const onChange = (e) => {
+    setPactMember((prevState) => ({
+      ...prevState,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmitMember = (e) => {
+    e.preventDefault();
+    const pactData = {
+      name,
+      email,
+    };
+    dispatch(addToPact(pactData));
+  };
+  useState(() => {
+    if (isError) {
+      console.log(message)
+      toast.error(message+"#2");
+    }
+  }, [isError, message]);
+  console.log(pact)
   return (
     <div>
       <section className="form">
@@ -16,27 +44,43 @@ const Pact = () => {
         </h4>
       </section>
       <section className="form">
-        <div className="form-group">
-          <label htmlFor="pact-name">Name</label>
-          <input
-            type="text"
-            name="name"
-            id="name"
-            className="form-control"
-            value={pactName}
-          />
-          <label htmlFor="pact-email">Email</label>
-          <input
-            type="text"
-            name="email"
-            id="email"
-            value={pactEmail}
-            className="form-control"
-          />
-          <button className="btn btn-block" type="submit"onClick={handleSubmitMember}>
-            Add Member
-          </button>
-        </div>
+        <form onSubmit={handleSubmitMember}>
+          <div className="form-group">
+            <label htmlFor="pact-name">Name</label>
+            <input
+              type="text"
+              name="name"
+              id="name"
+              required
+              minLength={3}
+              className="form-control"
+              onChange={onChange}
+              value={name}
+            />
+            <label htmlFor="pact-email">Email</label>
+            <input
+              type="email"
+              required
+              name="email"
+              id="email"
+              value={email}
+              onChange={onChange}
+              className="form-control"
+            />
+            <button className="btn btn-block" type="submit">
+              Add Member
+            </button>
+          </div>
+        </form>
+        {pact.pact.length > 0 ? (
+          <section className="content">
+            {pact.pact.map((member, idx) => {
+              return <div>{member}</div>;
+            })}
+          </section>
+        ) : (
+          <h3>You have no members in your pact.</h3>
+        )}
       </section>
     </div>
   );

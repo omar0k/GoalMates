@@ -9,7 +9,7 @@ const Goals = () => {
   );
   useEffect(() => {
     if (isError) {
-      toast.error(message);
+      toast.error(message+"32");
     }
   }, [isError, message]);
   return (
