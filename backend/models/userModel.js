@@ -15,10 +15,16 @@ const userSchema = mongoose.Schema(
     },
     password: {
       type: String,
-      min:8,
-      max:255,
+      min: 8,
+      max: 255,
       requird: [true, "Please add a password."],
     },
+    pact: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     verified: {
       type: Boolean,
       default: false,

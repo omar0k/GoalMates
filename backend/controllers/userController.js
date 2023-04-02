@@ -118,24 +118,99 @@ const verifyUser = asyncHandler(async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.params.id });
     if (!user) {
-      console.log("not user");
-      res.status(400).send({ message: "Invalid link" });
+      return res.status(400).send({ message: "Invalid link" });
+    }
+    if (user.verified) {
+      return res.status(400).send({ message: "Email verified already" });
     }
     const token = await Token.findOne({
       userId: user._id,
       token: req.params.token,
     });
     if (!token) {
-      return res.status(400).send({ message: "invalid link" });
+      return res.status(400).json({ message: "invalid link" });
     }
     console.log(user._id);
     await User.updateOne({ _id: user._id }, { verified: true });
     await token.remove();
-    res.status(200).send({ message: "Email verfied successfully." });
-    console.log("email verified");
+    return res.status(200).json({ message: "Email verified successfully." });
+  } catch (error) {
+    // console.log(error);
+    throw new Error(error);
+  }
+});
+const getPact = asyncHandler(async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(400).json({
+        message: "User not found",
+      });
+    }
+    const pact = user.pact;
+    res.status(200).json({ pact: pact });
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+const addToPact = asyncHandler(async (req, res) => {
+  try {
+    if (!req.body.email) {
+      res.status(400).json({
+        message: "Please enter email",
+      });
+    }
+    const userAddedTo = await User.findById(req.user.id);
+    const userToAdd = await User.findOne({ email: req.body.email });
+    if (!userToAdd) {
+      return res.status(400).json({
+        message: "User not found",
+      });
+    }
+    if (userAddedTo.pact.includes(userToAdd._id)) {
+      return res.status(400).json({ message: "User is already in pact" });
+    }
+    userAddedTo.pact.push(userToAdd._id);
+    await userAddedTo.save();
+    res.json({ message: "User added to pact", pact: userAddedTo.pact });
   } catch (error) {
     console.log(error);
     throw new Error(error);
   }
 });
-module.exports = { registerUser, loginUser, getMe, verifyUser };
+
+const removeFromPact = asyncHandler(async (req, res) => {
+  try {
+    const userRemovedFrom = await User.findById(req.user.id);
+    const userToRemove = await User.findOne({ email: req.body.email });
+    if (!userToRemove) {
+      return res.status(400).json({
+        message: "User not found",
+      });
+    }
+    if (!userRemovedFrom.pact.includes(userToRemove._id)) {
+      return res.status(400).json({
+        message: "User not in pact",
+      });
+    }
+    await User.updateOne(
+      { _id: userRemovedFrom._id },
+      { $pull: { pact: userToRemove._id } }
+    );
+    res.status(200).json({
+      message: "User removed from pact",
+    });
+  } catch (error) {
+    console.error(error);
+    throw new Error(error);
+  }
+});
+module.exports = {
+  registerUser,
+  loginUser,
+  getMe,
+  verifyUser,
+  getPact,
+  addToPact,
+  removeFromPact,
+};

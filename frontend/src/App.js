@@ -7,6 +7,7 @@ import EmailVerify from "./pages/EmailVerify";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Pact from "./components/Pact";
+import Verify from "./pages/Verify";
 function App() {
   return (
     <>
@@ -17,6 +18,7 @@ function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/register/verify" element={<Verify />} />
             <Route path="/users/:id/verify/:token" element={<EmailVerify />} />
             <Route path="/pact" element={<Pact />} />
           </Routes>
