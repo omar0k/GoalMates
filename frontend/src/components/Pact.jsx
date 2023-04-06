@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addToPact } from "../features/pact/pactSlice";
+import { addToPact, getPact } from "../features/pact/pactSlice";
 import { toast } from "react-toastify";
 const Pact = () => {
   const [pactMember, setPactMember] = useState({
@@ -29,11 +29,11 @@ const Pact = () => {
   };
   useState(() => {
     if (isError) {
-      console.log(message)
-      toast.error(message+"#2");
+      console.log(message);
+      toast.error(message + "#2");
     }
   }, [isError, message]);
-  console.log(pact)
+  console.log(pact);
   return (
     <div>
       <section className="form">
@@ -72,15 +72,6 @@ const Pact = () => {
             </button>
           </div>
         </form>
-        {pact.pact.length > 0 ? (
-          <section className="content">
-            {pact.pact.map((member, idx) => {
-              return <div>{member}</div>;
-            })}
-          </section>
-        ) : (
-          <h3>You have no members in your pact.</h3>
-        )}
       </section>
     </div>
   );

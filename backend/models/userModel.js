@@ -21,8 +21,9 @@ const userSchema = mongoose.Schema(
     },
     pact: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        _id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        name: { type: String, required: true, min: 3 },
+        email: { type: String, required: true },
       },
     ],
     verified: {
