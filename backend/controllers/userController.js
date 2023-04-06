@@ -216,6 +216,9 @@ const removeFromPact = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
+const emailPact = asyncHandler(async (req, res) => {
+  const user = User.findById(req.body._id);
+});
 module.exports = {
   registerUser,
   loginUser,

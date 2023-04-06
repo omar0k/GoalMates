@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addToPact, getPact } from "../features/pact/pactSlice";
 import { toast } from "react-toastify";
+import { combineReducers } from "@reduxjs/toolkit";
 const Pact = () => {
   const [pactMember, setPactMember] = useState({
     email: "",
@@ -33,7 +34,6 @@ const Pact = () => {
       toast.error(message + "#2");
     }
   }, [isError, message]);
-  console.log(pact);
   return (
     <div>
       <section className="form">
@@ -73,6 +73,20 @@ const Pact = () => {
           </div>
         </form>
       </section>
+      {pact.pact.length > 0 && (
+        <section className="content">
+          <div className="goals">
+            {pact.pact.map((member) => {
+              return (
+                <div className="goal">
+                  <p>{member.name}</p>
+                  <p>{member.email}</p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
     </div>
   );
 };

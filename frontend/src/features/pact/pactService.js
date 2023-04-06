@@ -12,6 +12,18 @@ const addToPact = async (userData, token) => {
     return response.data;
   }
 };
+const emailPact = async (pactMembers, userData, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const data = { pactMembers: pactMembers, userData: userData };
+  const response = await axios.post(API_URL, data, config);
+  if (response.data) {
+    console.log(response.data);
+  }
+};
 const getPact = async (token) => {
   const config = {
     headers: {
@@ -41,5 +53,6 @@ const pactService = {
   addToPact,
   removeFromPact,
   getPact,
+  emailPact,
 };
 export default pactService;
