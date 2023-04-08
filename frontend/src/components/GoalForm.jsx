@@ -3,20 +3,23 @@ import { useSelector, useDispatch } from "react-redux";
 import { createGoal } from "../features/goals/goalSlice";
 import Datetime from "react-datetime";
 import { toast } from "react-toastify";
+import { emailPact } from "../features/pact/pactSlice";
 import "react-datetime/css/react-datetime.css";
 function GoalForm() {
   const [text, setText] = useState("");
-  const dispatch = useDispatch();
   const [dueDate, setDueDate] = useState("");
+  const [pactToEmail, setPactToEmail] = useState([]);
+  const { pact } = useSelector((state) => state.pact);
+  const dispatch = useDispatch();
   const onSubmit = (e) => {
     e.preventDefault();
-    if (dueDate > Date.now()) {
-      toast.error("Due date must be further than today.");
-    }
     dispatch(createGoal({ text, dueDate }));
+    dispatch(emailPact());
     setText("");
   };
-
+  const getRandomPactMembers = () => {
+    
+  };
   const handleDueDateChange = (e) => {
     setDueDate(e.target.value);
   };

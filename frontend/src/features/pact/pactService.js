@@ -12,13 +12,13 @@ const addToPact = async (userData, token) => {
     return response.data;
   }
 };
-const emailPact = async (pactMembers, userData, token) => {
+const emailPact = async (pactMembers, token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
-  const data = { pactMembers: pactMembers, userData: userData };
+  const data = { pactMembers: pactMembers };
   const response = await axios.post(API_URL, data, config);
   if (response.data) {
     console.log(response.data);

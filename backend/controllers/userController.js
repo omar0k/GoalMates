@@ -217,7 +217,26 @@ const removeFromPact = asyncHandler(async (req, res) => {
   }
 });
 const emailPact = asyncHandler(async (req, res) => {
-  const user = User.findById(req.body._id);
+  const user = await User.findById(req.body._id);
+  if (!user) {
+    return res.status(400).json({
+      message: "User not found",
+    });
+  }
+  const pactToEmail = req.body.pact;
+  if (!pactToEmail) {
+    return res.status(400).json({
+      message: "No pact members to email",
+    });
+  }
+  for (const pactMember in pactToEmail) {
+    await sendEmail(
+      user.email,
+      "This is the goal email",
+      `You have been chosen to be emailed ${pactMember.name}`
+    );
+  }
+  return res.status(200).json({ message: "Emails sent successfully" });
 });
 module.exports = {
   registerUser,
@@ -227,4 +246,5 @@ module.exports = {
   getPact,
   addToPact,
   removeFromPact,
+  emailPact,
 };
