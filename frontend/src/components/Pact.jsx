@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addToPact, getPact } from "../features/pact/pactSlice";
 import { toast } from "react-toastify";
-import { combineReducers } from "@reduxjs/toolkit";
+import Spinner from "../components/Spinner";
 const Pact = () => {
   const [pactMember, setPactMember] = useState({
     email: "",
@@ -10,6 +10,7 @@ const Pact = () => {
   });
   const dispatch = useDispatch();
   const { email, name } = pactMember;
+  const [currentPact, setCurrentPact] = useState([]);
   const { pact, isError, isSuccess, message, isLoading } = useSelector(
     (state) => state.pact
   );
@@ -27,13 +28,19 @@ const Pact = () => {
       email,
     };
     dispatch(addToPact(pactData));
+    dispatch(getPact());
   };
-  useState(() => {
+  useEffect(() => {
+    setCurrentPact(pact.pact);
+  }, [pact]);
+  useEffect(() => {
     if (isError) {
-      console.log(message);
-      toast.error(message + "#2");
+      toast.error(message);
     }
   }, [isError, message]);
+  if (isLoading) {
+    return <Spinner />;
+  }
   return (
     <div>
       <section className="form">
@@ -73,10 +80,10 @@ const Pact = () => {
           </div>
         </form>
       </section>
-      {pact.pact.length > 0 && (
+      {currentPact.length > 0 && (
         <section className="content">
           <div className="goals">
-            {pact.pact.map((member) => {
+            {currentPact.map((member) => {
               return (
                 <div className="goal">
                   <p>{member.name}</p>

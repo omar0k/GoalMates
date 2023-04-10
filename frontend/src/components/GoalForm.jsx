@@ -8,17 +8,30 @@ import "react-datetime/css/react-datetime.css";
 function GoalForm() {
   const [text, setText] = useState("");
   const [dueDate, setDueDate] = useState("");
-  const [pactToEmail, setPactToEmail] = useState([]);
   const { pact } = useSelector((state) => state.pact);
   const dispatch = useDispatch();
+  const getRandomPactMembers = () => {
+    const selectedMembers = [];
+    const total = pact.pact.length;
+    const pactCopy = [...pact.pact, pact.pact];
+    const numToSelect = Math.round(total * 0.5);
+    for (let i = 0; i < numToSelect; i++) {
+      const randomIdx = Math.floor(Math.random() * total);
+      const randomMember = pactCopy[randomIdx];
+      selectedMembers.push(randomMember);
+      pactCopy.splice(randomIdx, 1);
+    }
+    return selectedMembers;
+  };
   const onSubmit = (e) => {
     e.preventDefault();
-    dispatch(createGoal({ text, dueDate }));
-    dispatch(emailPact());
+    const selectedMembers = getRandomPactMembers();
+    dispatch(createGoal({ text, dueDate })).then((result) => {
+      dispatch(
+        emailPact({ pactMembers: selectedMembers, goalId: result.payload._id })
+      );
+    });
     setText("");
-  };
-  const getRandomPactMembers = () => {
-    
   };
   const handleDueDateChange = (e) => {
     setDueDate(e.target.value);

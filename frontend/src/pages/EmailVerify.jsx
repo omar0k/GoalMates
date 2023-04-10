@@ -3,10 +3,11 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { verifyEmail } from ".././features/verify/verifySlice";
 import { Link } from "react-router-dom";
+import Spinner from "../components/Spinner";
+import { toast } from "react-toastify";
 const EmailVerify = () => {
   const [validUrl, setValidUrl] = useState(false);
   const params = useParams();
-  console.log();
   const {
     verificationSuccess,
     verificationError,
@@ -28,7 +29,14 @@ const EmailVerify = () => {
       verifyEmailUrl();
     }
   }, [dispatch, params.id, params.token]);
-  console.log(message);
+  useEffect(() => {
+    if (verificationError) {
+      toast.error(message);
+    }
+  }, [verificationError, dispatch]);
+  if (verificationLoading) {
+    return <Spinner />;
+  }
   return (
     <>
       <div

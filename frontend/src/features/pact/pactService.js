@@ -12,16 +12,16 @@ const addToPact = async (userData, token) => {
     return response.data;
   }
 };
-const emailPact = async (pactMembers, token) => {
+const emailPact = async (pactMembers, goalId, token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
-  const data = { pactMembers: pactMembers };
-  const response = await axios.post(API_URL, data, config);
+  const data = { pactMembers: pactMembers, goalId: goalId };
+  const response = await axios.post(API_URL + "/email", data, config);
   if (response.data) {
-    console.log(response.data);
+    return response.data;
   }
 };
 const getPact = async (token) => {

@@ -5,7 +5,7 @@ const User = require("../models/userModel");
 const Token = require("../models/tokenModel");
 const sendEmail = require("../utils/sendEmail");
 const crypto = require("crypto");
-
+const Goal = require("../models/goalModel");
 // @desc Register new user
 // @route POST /api/users
 // @access Public
@@ -74,7 +74,6 @@ const loginUser = asyncHandler(async (req, res) => {
       verified: user.verified,
     });
   } else if (!user.verified) {
-    console.log("not verified");
     let token = await Token.findOne({ userId: user._id });
 
     if (!token) {
@@ -130,12 +129,10 @@ const verifyUser = asyncHandler(async (req, res) => {
     if (!token) {
       return res.status(400).json({ message: "invalid link" });
     }
-    console.log(user._id);
     await User.updateOne({ _id: user._id }, { verified: true });
     await token.remove();
     return res.status(200).json({ message: "Email verified successfully." });
   } catch (error) {
-    // console.log(error);
     throw new Error(error);
   }
 });
@@ -162,7 +159,6 @@ const addToPact = asyncHandler(async (req, res) => {
     }
     const userAddedTo = await User.findById(req.user.id);
     const userToAdd = await User.findOne({ email: req.body.email });
-
     if (!userToAdd) {
       return res.status(400).json({
         message: "User not found",
@@ -185,7 +181,6 @@ const addToPact = asyncHandler(async (req, res) => {
       .status(200)
       .json({ userAddedId: userToAdd._id, pact: userAddedTo.pact });
   } catch (error) {
-    console.log(error);
     throw new Error(error);
   }
 });
@@ -217,23 +212,35 @@ const removeFromPact = asyncHandler(async (req, res) => {
   }
 });
 const emailPact = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.body._id);
+  const user = await User.findById(req.user.id);
+  const goal = await Goal.findById(req.body.goalId);
   if (!user) {
     return res.status(400).json({
       message: "User not found",
     });
   }
-  const pactToEmail = req.body.pact;
+  if (!goal) {
+    return res.status(400).json({
+      message: "Goal not found",
+    });
+  }
+  const pactToEmail = req.body.pactMembers;
   if (!pactToEmail) {
     return res.status(400).json({
       message: "No pact members to email",
     });
   }
-  for (const pactMember in pactToEmail) {
+  for (const pactMember of pactToEmail) {
     await sendEmail(
-      user.email,
-      "This is the goal email",
-      `You have been chosen to be emailed ${pactMember.name}`
+      pactMember.email,
+      `${user.name} has just created a goal!`,
+
+      `Hello ${pactMember.name}, hope all is well. ${user.name} has just created a goal they want to achieve and you have been chosen out of their pact to hold them accountable for completing this goal. Below are their goal's description
+      
+      Goal: ${goal.text}
+      Created at: ${goal.createdAt}
+      DueDate: ${goal.dueDate}`
+
     );
   }
   return res.status(200).json({ message: "Emails sent successfully" });

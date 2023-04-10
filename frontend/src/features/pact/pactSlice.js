@@ -44,11 +44,10 @@ export const removeFromPact = createAsyncThunk(
 );
 export const emailPact = createAsyncThunk(
   "pact/email",
-  async (pactMembers, thunkAPI) => {
+  async ({ pactMembers, goalId }, thunkAPI) => {
     try {
-      console.log("pactslice", pactMembers);
       const token = thunkAPI.getState().auth.user.token;
-      return await pactService.emailPact(pactMembers, token);
+      return await pactService.emailPact(pactMembers, goalId, token);
     } catch (error) {
       const message =
         (error.response &&
