@@ -188,22 +188,27 @@ const addToPact = asyncHandler(async (req, res) => {
 const removeFromPact = asyncHandler(async (req, res) => {
   try {
     const userRemovedFrom = await User.findById(req.user.id);
-    const userToRemove = await User.findOne({ email: req.body.email });
+    const userToRemove = await User.findOne({ _id: req.params.memberId });
     if (!userToRemove) {
       return res.status(400).json({
         message: "User not found",
       });
     }
-    if (!userRemovedFrom.pact.includes(userToRemove._id)) {
+    if (
+      !userRemovedFrom.pact.some(
+        (member) => member.email === userToRemove.email
+      )
+    ) {
       return res.status(400).json({
         message: "User not in pact",
       });
     }
-    await User.updateOne(
-      { _id: userRemovedFrom._id },
-      { $pull: { pact: userToRemove._id } }
+    // console.log(userRemovedFrom, userToRemove);
+    userRemovedFrom.pact = userRemovedFrom.pact.filter(
+      (member) => member._id.toString() !== req.params.memberId
     );
-    res.status(200).json({
+    await userRemovedFrom.save();
+    return res.status(200).json({
       message: "User removed from pact",
     });
   } catch (error) {
@@ -240,7 +245,6 @@ const emailPact = asyncHandler(async (req, res) => {
       Goal: ${goal.text}
       Created at: ${goal.createdAt}
       DueDate: ${goal.dueDate}`
-
     );
   }
   return res.status(200).json({ message: "Emails sent successfully" });

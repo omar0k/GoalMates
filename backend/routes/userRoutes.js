@@ -19,7 +19,7 @@ router.get("/me", protect, getMe);
 router.get("/:id/verify/:token", verifyUser);
 router.post("/pact", protect, addToPact);
 router.get("/pact", protect, getPact);
-router.delete("/pact", protect, removeFromPact);
+router.delete("/pact/:memberId", protect, removeFromPact);
 router.post("/pact/email", protect, emailPact);
 
 module.exports = router;

@@ -37,16 +37,14 @@ const getPact = async (token) => {
 };
 // Remove member from pact
 
-const removeFromPact = async (userData, token) => {
+const removeFromPact = async (memberId, token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
-  const response = await axios.delete(API_URL, userData, config);
-  if (response.data) {
-    return response.data;
-  }
+  const response = await axios.delete(API_URL + `/${memberId}`, config);
+  return response.data;
 };
 
 const pactService = {

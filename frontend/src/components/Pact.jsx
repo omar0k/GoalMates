@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addToPact, getPact } from "../features/pact/pactSlice";
+import { addToPact, getPact, removeFromPact } from "../features/pact/pactSlice";
 import { toast } from "react-toastify";
 import Spinner from "../components/Spinner";
 const Pact = () => {
@@ -11,7 +11,8 @@ const Pact = () => {
   const dispatch = useDispatch();
   const { email, name } = pactMember;
   const [currentPact, setCurrentPact] = useState([]);
-  const { pact, isError, isSuccess, message, isLoading } = useSelector(
+  const { user } = useSelector((state) => state.auth);
+  const { pact, isError, message, isLoading } = useSelector(
     (state) => state.pact
   );
   const onChange = (e) => {
@@ -85,9 +86,15 @@ const Pact = () => {
           <div className="goals">
             {currentPact.map((member) => {
               return (
-                <div className="goal">
+                <div className="goal" key={member._id}>
                   <p>{member.name}</p>
                   <p>{member.email}</p>
+                  <button
+                    className="close"
+                    onClick={() => dispatch(removeFromPact(member._id))}
+                  >
+                    X
+                  </button>
                 </div>
               );
             })}

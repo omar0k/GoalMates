@@ -8,12 +8,12 @@ const protect = asyncHandler(async (req, res, next) => {
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
-  ) {
-    try {
+    ) {
+      try {
       // get token from hader
-
       token = req.headers.authorization.split(" ")[1];
 
+      
       //   verify that token matches user token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 

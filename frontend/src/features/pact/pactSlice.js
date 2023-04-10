@@ -28,9 +28,10 @@ export const addToPact = createAsyncThunk(
 );
 export const removeFromPact = createAsyncThunk(
   "pact/remove",
-  async (userData, thunkAPI) => {
+  async (memberId, thunkAPI) => {
     try {
       const token = thunkAPI.getState().auth.user.token;
+      return await pactService.removeFromPact(memberId, token);
     } catch (error) {
       const message =
         (error.response &&
@@ -99,16 +100,14 @@ export const pactSlice = createSlice({
       .addCase(removeFromPact.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.isError = false;
-        state.message = action.payload;
+        state.pact = state.pact.filter(
+          (member) => member._id !== action.payload.id
+        );
       })
       .addCase(removeFromPact.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
-        state.isSuccess = false;
-        state.pact = state.pact.filter(
-          (member) => member._id !== action.payload.id
-        );
+        state.message = action.payload;
       })
       .addCase(getPact.pending, (state) => {
         state.isLoading = true;

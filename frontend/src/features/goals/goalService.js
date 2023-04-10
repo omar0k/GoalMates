@@ -9,7 +9,6 @@ const createGoal = async (goalData, token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-
   const response = await axios.post(API_URL, goalData, config);
 
   return response.data;

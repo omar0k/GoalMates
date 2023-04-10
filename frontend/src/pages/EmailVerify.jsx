@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { verifyEmail } from ".././features/verify/verifySlice";
@@ -6,34 +6,29 @@ import { Link } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import { toast } from "react-toastify";
 const EmailVerify = () => {
-  const [validUrl, setValidUrl] = useState(false);
   const params = useParams();
-  const {
-    verificationSuccess,
-    verificationError,
-    verificationLoading,
-    message,
-  } = useSelector((state) => state.verify);
+  const { verificationError, verificationLoading, message } = useSelector(
+    (state) => state.verify
+  );
   const dispatch = useDispatch();
   useEffect(() => {
     const verifyEmailUrl = async () => {
       const userData = { id: params.id, token: params.token };
       try {
         await dispatch(verifyEmail(userData));
-        setValidUrl(true);
       } catch (error) {
-        setValidUrl(false);
+        toast.error(message);
       }
     };
     if (params.id && params.token) {
       verifyEmailUrl();
     }
-  }, [dispatch, params.id, params.token]);
+  }, [dispatch, params.id, params.token, message]);
   useEffect(() => {
     if (verificationError) {
       toast.error(message);
     }
-  }, [verificationError, dispatch]);
+  }, [verificationError, dispatch, message]);
   if (verificationLoading) {
     return <Spinner />;
   }
