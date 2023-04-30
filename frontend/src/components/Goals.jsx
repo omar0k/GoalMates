@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import GoalItem from "./GoalItem";
 import GoalForm from "./GoalForm";
 const Goals = () => {
-  const { goals, isLoading, isError, message } = useSelector(
+  const { goals,  isError, message } = useSelector(
     (state) => state.goals
   );
   useEffect(() => {

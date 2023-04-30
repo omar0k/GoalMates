@@ -11,7 +11,6 @@ const Pact = () => {
   const dispatch = useDispatch();
   const { email, name } = pactMember;
   const [currentPact, setCurrentPact] = useState([]);
-  const { user } = useSelector((state) => state.auth);
   const { pact, isError, message, isLoading } = useSelector(
     (state) => state.pact
   );
