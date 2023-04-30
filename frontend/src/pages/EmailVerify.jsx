@@ -42,7 +42,7 @@ const EmailVerify = () => {
           alignItems: "center",
         }}
       >
-        <h1>{message}</h1>
+        <h1>Email Verified Successfully</h1>
         <Link to="/login">
           <button className="btn">Login</button>
         </Link>
