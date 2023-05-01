@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_URL = "http://3.93.149.131:5000/api/users/pact";
+const API_URL = "https://3.93.149.131:5000/api/users/pact";
 
 const addToPact = async (userData, token) => {
   const config = {
