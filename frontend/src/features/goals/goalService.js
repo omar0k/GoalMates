@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "/api/goals/";
+const API_URL = "http://3.93.149.131:5000/api/goals/";
 
 // Create new goal
 const createGoal = async (goalData, token) => {
