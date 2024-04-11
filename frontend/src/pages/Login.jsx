@@ -22,6 +22,9 @@ function Login() {
     if (isError) {
       toast.error(message);
     }
+    if (user && !user.verified) {
+      toast.error(message);
+    }
     if (isSuccess || user) {
       navigate("/");
     }

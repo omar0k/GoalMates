@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "/api/goals/";
+const API_URL = "https://3.93.149.131:5000/api/goals/";
 
 // Create new goal
 const createGoal = async (goalData, token) => {
@@ -9,7 +9,6 @@ const createGoal = async (goalData, token) => {
       Authorization: `Bearer ${token}`,
     },
   };
-
   const response = await axios.post(API_URL, goalData, config);
 
   return response.data;
